@@ -2,7 +2,6 @@ CC = gcc
 CFLAGS = -Wall -Werror -Wextra -Wpedantic -fPIC -s
 CFLAGS_RELEASE = -O2 -flto
 CFLAGS_DEBUG = -g
-BIN_DIR = bin
 
 TEST_BIN_DIR = test/bin
 LIB_DIR = lib
@@ -29,7 +28,7 @@ $(STATIC_LIB): $(OBJ_FILES)
 
 # Compile each .c file into .o inside the lib directory
 $(LIB_DIR)/%.o: src/%.c
-	mkdir -p $(LIB_DIR) $(TEST_BIN_DIR) $(BIN_DIR) 
+	mkdir -p $(LIB_DIR) $(TEST_BIN_DIR)
 	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -c $< -o $@
 
 # Build shared library
