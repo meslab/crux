@@ -15,6 +15,7 @@ int main() {
 	Logger *logger = (Logger *)linear_arena_alloc(&linear_arena, sizeof(Logger));
 	logger_init(logger, &logger_options);
 
+	linear_arena_info(logger, &linear_arena);
 	linear_arena_free(&linear_arena);
 	return 0;
 }
