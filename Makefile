@@ -33,7 +33,7 @@ $(LIB_DIR)/%.o: src/%.c
 	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -c $< -o $@
 
 # Build shared library
-$(SHARED_LIB): $(wildcard src/*.c)
+$(SHARED_LIB): $(OBJ_FILES)
 	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -shared -o $(SHARED_LIB) $^
 
 # Test with static library
