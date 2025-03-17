@@ -149,6 +149,23 @@ void debug_log(Logger *logger, const char *message) {
   message_log(logger, DEBUG, message);
 }
 
+/// @brief Log an error message with a formatted string
+/// @param logger The logger
+/// @param format The format string
+/// @param    ... The format arguments
+void error_log_formatted(Logger *logger, const char *format, ...) {
+  if (ERROR < logger->level)
+    return;
+
+  char log_buffer[MESSAGE_LOG_MAX_LENGTH];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(log_buffer, MESSAGE_LOG_MAX_LENGTH, format, args);
+  va_end(args);
+
+  message_log(logger, ERROR, log_buffer);
+}
+
 /// @brief Log an info message with a formatted string
 /// @param logger The logger
 /// @param format The format string
@@ -164,6 +181,23 @@ void info_log_formatted(Logger *logger, const char *format, ...) {
   va_end(args);
 
   message_log(logger, INFO, log_buffer);
+}
+
+/// @brief Log an warning message with a formatted string
+/// @param logger The logger
+/// @param format The format string
+/// @param    ... The format arguments
+void warning_log_formatted(Logger *logger, const char *format, ...) {
+  if (WARNING < logger->level)
+    return;
+
+  char log_buffer[MESSAGE_LOG_MAX_LENGTH];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(log_buffer, MESSAGE_LOG_MAX_LENGTH, format, args);
+  va_end(args);
+
+  message_log(logger, WARNING, log_buffer);
 }
 
 /// @brief Log a debug message with a formatted string

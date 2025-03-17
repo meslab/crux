@@ -31,7 +31,9 @@ void info_log(Logger *logger, const char *message);
 void warning_log(Logger *logger, const char *message);
 void debug_log(Logger *logger, const char *message);
 
+void error_log_formatted(Logger *logger, const char *format, ...);
 void info_log_formatted(Logger *logger, const char *format, ...);
+void warning_log_formatted(Logger *logger, const char *format, ...);
 void debug_log_formatted(Logger *logger, const char *format, ...);
 
 #endif // LOGGER_H
