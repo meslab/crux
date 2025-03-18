@@ -16,6 +16,7 @@ void linear_arena_init(LinearMemoryArena *arena, size_t size) {
 	}
 	arena->size = size;
 	arena->offset = 0;
+	linear_arena_status_update(arena);
 }
 
 /// @brief Allocate memory from the arena
@@ -45,10 +46,7 @@ void linear_arena_free(LinearMemoryArena *arena) {
 	arena->offset = 0;
 }
 
-/// @brief Print information about the memory arena
-/// @param logger The logger to use for printing
-/// @param arena  The memory arena to print information about
-void linear_arena_info(Logger *logger, LinearMemoryArena *arena) {
-	info_log_formatted(logger, "Arena size: %ld, offset: %ld\n", arena->size,
-			arena->offset);
+void linear_arena_status_update(LinearMemoryArena *arena) {
+    snprintf(arena->status, sizeof(arena->status), "Arena size: %ld, offset: %ld", 
+             arena->size, arena->offset);
 }
