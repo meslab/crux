@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -Wpedantic -Werror=analyzer-malloc-leak -fsanitize=address -fanalyzer -fPIC -s
+CFLAGS = -Wall -Werror -Wextra -Wpedantic -fPIC -s -Iinclude
 CFLAGS_RELEASE = -O2 -flto
-CFLAGS_DEBUG = -g
+CFLAGS_DEBUG = -g -Werror=analyzer-malloc-leak -fsanitize=address -fanalyzer
 
 TEST_BIN_DIR = test/bin
 LIB_DIR = lib
@@ -33,11 +33,11 @@ $(LIB_DIR)/%.o: src/%.c
 
 # Build shared library
 $(SHARED_LIB): $(OBJ_FILES)
-	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -shared -o $(SHARED_LIB) $^
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) $(CFLAGS_RELEASE) -shared -o $(SHARED_LIB) $^
 
 # Test with static library
 test_static: $(STATIC_LIB) $(TEST_SRC)
-	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB) -o $(TEST_STATIC_BIN)
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB) -o $(TEST_STATIC_BIN)
 
 
 # Run tests
