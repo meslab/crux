@@ -1,23 +1,33 @@
 #include "../include/logger.h"
 #include "../include/linear_arena.h"
+#include <stdlib.h>
 
 int main() {   
 	LinearMemoryArena linear_arena;
 	linear_arena_init(&linear_arena, 1024 * 1024);
 
-	LoggerOptions logger_options = {
-                .verbose = 0,
-                .log_level = "DEBUG",
-                .err_log = NULL,
-                .out_log = NULL  
-        };
-
 	Logger *logger = (Logger *)linear_arena_alloc(&linear_arena, sizeof(Logger));
-	logger_init(logger, &logger_options);
+	Logger *logger1 = (Logger *)malloc(sizeof(Logger));
+	if (!logger1) {
+		perror("Cannot allocate logger!");
+		return -1;
+	}
+	logger_init(logger, NULL, NULL, "INFO");
+	logger_init(logger1, NULL, NULL, "INFO");
+
+	Logger logger2 = {.err_log = NULL, .out_log = NULL, .level = ERROR};
+	logger_init(&logger2, NULL, NULL, "INFO");
 
 	linear_arena_status_update(&linear_arena);
-        info_log(logger, linear_arena.status);      
+	info_log(logger, linear_arena.status);      
+	info_log(logger1, linear_arena.status);      
+	info_log(&logger2, linear_arena.status);      
 
+        // Cleanup
+	logger_close(logger);
+	logger_close(logger1);
+	logger_close(&logger2);
+	free(logger1);
 	linear_arena_free(&linear_arena);
 	return 0;
 }
