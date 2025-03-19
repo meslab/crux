@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -Wpedantic -fPIC -s
+CFLAGS = -Wall -Werror -Wextra -Wpedantic -Werror=analyzer-malloc-leak -fsanitize=address -fanalyzer -fPIC -s
 CFLAGS_RELEASE = -O2 -flto
 CFLAGS_DEBUG = -g
 
