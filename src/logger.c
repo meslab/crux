@@ -71,39 +71,17 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
  * @param opts The options
  * @return int 0 on success, -1 on failure
  */
-int logger_init(Logger *logger, const LoggerOptions *opts) {
-	logger->err_log = NULL;
-	logger->out_log = NULL;
+int logger_init(Logger *logger, FILE *err_log, FILE *out_log, const char *log_level) {
+	if (!logger)
+		return -1;
+
+	logger->err_log = err_log;
+	logger->out_log = out_log;
 	logger->level = ERROR;
 
-	if (!opts)
-		return -1; // Ensure opts is valid
-
 	// Set the log level
-	logger->level = parse_log_level(opts->log_level ? opts->log_level : "ERROR");
+	logger->level = parse_log_level(log_level ? log_level : "ERROR");
 
-	// Open log files if paths are provided
-	if (opts->err_log) {
-		logger->err_log = fopen(opts->err_log, "a");
-		if (!logger->err_log) {
-			perror("Failed to open error log file");
-			fprintf(stderr, "errno: %d, strerror: %s\n", errno, strerror(errno));
-			if (logger->err_log)
-				fclose(logger->err_log);
-			return -1;
-		}
-	}
-
-	if (opts->out_log) {
-		logger->out_log = fopen(opts->out_log, "a");
-		if (!logger->out_log) {
-			perror("Failed to open output log file");
-			fprintf(stderr, "errno: %d, strerror: %s\n", errno, strerror(errno));
-			if (logger->out_log)
-				fclose(logger->out_log);
-			return -1;
-		}
-	}
 
 	return 0; // Success
 }
@@ -114,11 +92,13 @@ int logger_init(Logger *logger, const LoggerOptions *opts) {
  * @param logger The logger
  */
 void logger_close(Logger *logger) {
-	if (logger->err_log)
-		fclose(logger->err_log);
-	if (logger->out_log)
-		fclose(logger->out_log);
-	logger->err_log = logger->out_log = NULL;
+	if (logger) {
+		if (logger->err_log)
+			fclose(logger->err_log);
+		if (logger->out_log)
+			fclose(logger->out_log);
+		logger->err_log = logger->out_log = NULL;
+	}
 }
 
 /// @brief Log an error message
