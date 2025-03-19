@@ -8,13 +8,6 @@
 
 typedef enum { DEBUG, INFO, WARNING, ERROR } LogLevel;
 
-typedef struct LoggerOptions {
-  uint8_t verbose;
-  char *log_level;
-  char *err_log;
-  char *out_log;
-} LoggerOptions;
-
 typedef struct {
   FILE *err_log;
   FILE *out_log;
