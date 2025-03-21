@@ -47,6 +47,6 @@ void linear_arena_free(LinearMemoryArena *arena) {
 }
 
 void linear_arena_status_update(LinearMemoryArena *arena) {
-    snprintf(arena->status, sizeof(arena->status), "Arena size: %ld, offset: %ld", 
-             arena->size, arena->offset);
+	snprintf(arena->status, sizeof(arena->status), "Arena size: %ld, offset: %ld", 
+			arena->size, arena->offset);
 }

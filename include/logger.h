@@ -9,9 +9,9 @@
 typedef enum { DEBUG, INFO, WARNING, ERROR } LogLevel;
 
 typedef struct {
-  FILE *err_log;
-  FILE *out_log;
-  LogLevel level;
+	FILE *err_log;
+	FILE *out_log;
+	LogLevel level;
 } Logger;
 
 int logger_init(Logger *logger, FILE *err_log, FILE *out_log, const char *log_level);

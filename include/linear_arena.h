@@ -7,10 +7,10 @@
 #define ARENA_STATUS_LENGTH 64
 
 typedef struct LinearMemoryArena {
-  char status[ARENA_STATUS_LENGTH];
-  uint8_t *buffer;
-  size_t size;
-  size_t offset;
+	char status[ARENA_STATUS_LENGTH];
+	uint8_t *buffer;
+	size_t size;
+	size_t offset;
 } LinearMemoryArena;
 
 void linear_arena_init(LinearMemoryArena *arena, size_t size);
