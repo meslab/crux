@@ -57,7 +57,7 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
 
 	time_t now = time(NULL);
 	struct tm *tm_info = localtime(&now);
-	char time_buf[20]; // YYYY-MM-DD HH:MM:SS
+	char time_buf[20] = {0}; // YYYY-MM-DD HH:MM:SS
 	strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", tm_info);
 
 	fprintf(dest, "[%s] [%s] %s\n", time_buf, log_level_str(level), message);

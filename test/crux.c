@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 int main() {   
-	LinearMemoryArena linear_arena;
+	LinearMemoryArena linear_arena = {0};
 	linear_arena_init(&linear_arena, 1024 * 1024);
 
 	Logger *logger = (Logger *)linear_arena_alloc(&linear_arena, sizeof(Logger));
@@ -23,10 +23,18 @@ int main() {
 	info_log(logger1, linear_arena.status);      
 	info_log(&logger2, linear_arena.status);      
 
-        // Cleanup
+	linear_arena_reset(&linear_arena);
+	linear_arena_status_update(&linear_arena);
+
+	// Cleanup
 	logger_close(logger);
+
+	info_log(logger1, linear_arena.status);      
+	info_log(&logger2, linear_arena.status);      
+
 	logger_close(logger1);
 	logger_close(&logger2);
+
 	free(logger1);
 	linear_arena_free(&linear_arena);
 	return 0;

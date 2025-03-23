@@ -30,12 +30,16 @@ void *linear_arena_alloc(LinearMemoryArena *arena, size_t size) {
 	}
 	void *ptr = &arena->buffer[arena->offset];
 	arena->offset += size;
+	memset(ptr, 0, size);
 	return ptr;
 }
 
 /// @brief  Reset the memory arena
 /// @param arena The memory arena to reset to the beginning of the buffer
-void linear_arena_reset(LinearMemoryArena *arena) { arena->offset = 0; }
+void linear_arena_reset(LinearMemoryArena *arena) { 
+	memset(arena->buffer, 0, arena->offset);
+	arena->offset = 0;
+}
 
 /// @brief Free the memory allocated for the arena
 /// @param arena The memory arena to free
