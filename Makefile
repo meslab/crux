@@ -1,7 +1,8 @@
-CC = gcc
-CFLAGS = -Wall -Werror -Wextra -Wpedantic -fPIC -s -Iinclude
-CFLAGS_RELEASE = -O2 -flto
-CFLAGS_DEBUG = -g -Werror=analyzer-malloc-leak -fsanitize=address -fanalyzer
+CC = clang
+CFLAGS = -Wall -Werror -Wextra -Wpedantic -fPIC
+CFLAGS_RELEASE = -O2 -ffunction-sections -flto -DNDEBUG
+CFLAGS_DEBUG = -g # -Werror=analyzer-malloc-leak -fsanitize=address -fanalyzer
+LDFLAGS += -Wl,--gc-sections -flto -s
 
 TEST_BIN_DIR = test/bin
 LIB_DIR = lib
@@ -29,7 +30,7 @@ $(STATIC_LIB): $(OBJ_FILES)
 # Compile each .c file into .o inside the lib directory
 $(LIB_DIR)/%.o: src/%.c
 	mkdir -p $(LIB_DIR) $(TEST_BIN_DIR)
-	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -c $< -o $@
+	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) -c $< -o $@
 
 # Build shared library
 $(SHARED_LIB): $(OBJ_FILES)
