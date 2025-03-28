@@ -1,8 +1,8 @@
-#include "../include/logger.h"
-#include "../include/linear_arena.h"
+#include "logger.h"
+#include "linear_arena.h"
 #include <stdlib.h>
 
-int main() {   
+int main(void) {   
 	LinearMemoryArena linear_arena = {0};
 	linear_arena_init(&linear_arena, 1024 * 1024);
 
