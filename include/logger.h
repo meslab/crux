@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-typedef enum { DEBUG, INFO, WARNING, ERROR } LogLevel;
+typedef enum { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR } LogLevel;
 
 typedef struct {
 	FILE *err_log;

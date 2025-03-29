@@ -15,7 +15,7 @@ int main(void) {
 	logger_init(logger, NULL, NULL, "INFO");
 	logger_init(logger1, NULL, NULL, "INFO");
 
-	Logger logger2 = {.err_log = NULL, .out_log = NULL, .level = ERROR};
+	Logger logger2 = {.err_log = NULL, .out_log = NULL, .level = LOG_ERROR};
 	logger_init(&logger2, NULL, NULL, "INFO");
 
 	linear_arena_status_update(&linear_arena);
