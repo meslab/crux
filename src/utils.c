@@ -11,7 +11,7 @@
 /// @param arr      The array to store the uint32_t values
 /// @param count    The number of uint32_t values
 int hex_to_uint32(const char *hex_str, uint32_t *arr, int *count,
-		size_t max_count) {
+		  size_t max_count) {
 	if (!hex_str || !arr || !count) {
 		return -1; // Error: NULL pointer
 	}
@@ -20,7 +20,7 @@ int hex_to_uint32(const char *hex_str, uint32_t *arr, int *count,
 	*count = 0;
 
 	for (size_t i = 0; i + 8 <= len && *count < (int)max_count; i += 8) {
-		char chunk[9] = {0};           // 8 hex digits + null terminator
+		char chunk[9] = {0};	       // 8 hex digits + null terminator
 		memcpy(chunk, hex_str + i, 8); // Avoids strncpy's overhead
 
 		char *endptr;

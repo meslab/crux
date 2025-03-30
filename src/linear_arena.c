@@ -11,7 +11,8 @@ void linear_arena_init(LinearMemoryArena *arena, size_t size) {
 	arena->buffer = (uint8_t *)malloc(size);
 	if (arena->buffer == NULL) {
 		perror("Failed to allocate memory for arena");
-		fprintf(stderr, "errno: %d, strerror: %s\n", errno, strerror(errno));
+		fprintf(stderr, "errno: %d, strerror: %s\n", errno,
+			strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 	arena->size = size;
@@ -36,7 +37,7 @@ void *linear_arena_alloc(LinearMemoryArena *arena, size_t size) {
 
 /// @brief  Reset the memory arena
 /// @param arena The memory arena to reset to the beginning of the buffer
-void linear_arena_reset(LinearMemoryArena *arena) { 
+void linear_arena_reset(LinearMemoryArena *arena) {
 	memset(arena->buffer, 0, arena->offset);
 	arena->offset = 0;
 }
@@ -51,6 +52,6 @@ void linear_arena_free(LinearMemoryArena *arena) {
 }
 
 void linear_arena_status_update(LinearMemoryArena *arena) {
-	snprintf(arena->status, sizeof(arena->status), "Arena size: %ld, offset: %ld", 
-			arena->size, arena->offset);
+	snprintf(arena->status, sizeof(arena->status),
+		 "Arena size: %ld, offset: %ld", arena->size, arena->offset);
 }

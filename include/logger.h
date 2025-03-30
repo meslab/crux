@@ -3,8 +3,8 @@
 
 #define MESSAGE_LOG_MAX_LENGTH 80
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 typedef enum { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR } LogLevel;
 
@@ -14,7 +14,8 @@ typedef struct {
 	LogLevel level;
 } Logger;
 
-int logger_init(Logger *logger, FILE *err_log, FILE *out_log, const char *log_level);
+int logger_init(Logger *logger, FILE *err_log, FILE *out_log,
+		const char *log_level);
 void logger_close(Logger *Logger);
 
 void message_log(Logger *logger, const LogLevel level, const char *message);

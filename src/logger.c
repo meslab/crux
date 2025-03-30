@@ -14,14 +14,14 @@
  */
 const char *log_level_str(LogLevel level) {
 	switch (level) {
-		case LOG_DEBUG:
-			return "DEBUG";
-		case LOG_INFO:
-			return "INFO";
-		case LOG_WARNING:
-			return "WARNING";
-		default:
-			return "ERROR";
+	case LOG_DEBUG:
+		return "DEBUG";
+	case LOG_INFO:
+		return "INFO";
+	case LOG_WARNING:
+		return "WARNING";
+	default:
+		return "ERROR";
 	}
 }
 
@@ -52,15 +52,17 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
 	if (level < logger->level)
 		return;
 
-	FILE *dest = (level == LOG_ERROR) ? (logger->err_log ? logger->err_log : stderr)
-		: (logger->out_log ? logger->out_log : stdout);
+	FILE *dest = (level == LOG_ERROR)
+			 ? (logger->err_log ? logger->err_log : stderr)
+			 : (logger->out_log ? logger->out_log : stdout);
 
 	time_t now = time(NULL);
 	struct tm *tm_info = localtime(&now);
 	char time_buf[20] = {0}; // YYYY-MM-DD HH:MM:SS
 	strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", tm_info);
 
-	fprintf(dest, "[%s] [%s] %s\n", time_buf, log_level_str(level), message);
+	fprintf(dest, "[%s] [%s] %s\n", time_buf, log_level_str(level),
+		message);
 	fflush(dest);
 }
 
@@ -71,7 +73,8 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
  * @param opts The options
  * @return int 0 on success, -1 on failure
  */
-int logger_init(Logger *logger, FILE *err_log, FILE *out_log, const char *log_level) {
+int logger_init(Logger *logger, FILE *err_log, FILE *out_log,
+		const char *log_level) {
 	if (!logger)
 		return -1;
 
@@ -81,7 +84,6 @@ int logger_init(Logger *logger, FILE *err_log, FILE *out_log, const char *log_le
 
 	// Set the log level
 	logger->level = parse_log_level(log_level ? log_level : "ERROR");
-
 
 	return 0; // Success
 }
