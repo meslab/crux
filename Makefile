@@ -85,6 +85,8 @@ run_test_static_debug: test_static_debug
 run_test_shared_debug: test_shared_debug
 	LD_LIBRARY_PATH=$(LIB_DIR)/debug $(TEST_SHARED_BIN_DEBUG)
 
+format:
+	find . -type f \( -name "*.c" -o -name "*.h" \) -exec clang-format -i {} +
 # Clean build artifacts
 clean:
 	rm -rf $(LIB_DIR) $(TEST_BIN_DIR)
@@ -93,4 +95,4 @@ clean:
         test_static_release test_static_debug test_shared_release test_shared_debug \
         clean \
         run_test_static_release run_test_shared_release \
-        run_test_static_debug run_test_shared_debug
+        run_test_static_debug run_test_shared_debug format
