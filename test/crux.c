@@ -1,13 +1,17 @@
 #include "linear_arena.h"
 #include "logger.h"
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
+
+const size_t MegaByte = (size_t)(1024 * 1024);
 
 int main(void) {
 	LinearMemoryArena linear_arena = {0};
-	linear_arena_init(&linear_arena, 1024 * 1024);
+	linear_arena_init(&linear_arena, MegaByte);
 
 	Logger *logger =
-	    (Logger *)linear_arena_alloc(&linear_arena, sizeof(Logger));
+		(Logger *)linear_arena_alloc(&linear_arena, sizeof(Logger));
 	Logger *logger1 = (Logger *)malloc(sizeof(Logger));
 	if (!logger1) {
 		perror("Cannot allocate logger!");
