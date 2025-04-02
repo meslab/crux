@@ -1,6 +1,5 @@
 #include "linear_arena.h"
 #include "logger.h"
-#include "tests.h"
 #include "utils.h"
 #include <stddef.h>
 #include <stdio.h>
