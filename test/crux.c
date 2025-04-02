@@ -1,5 +1,7 @@
 #include "linear_arena.h"
 #include "logger.h"
+#include "tests.h"
+#include "utils.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +13,7 @@ int main(void) {
 	linear_arena_init(&linear_arena, MegaByte);
 
 	Logger *logger =
-		(Logger *)linear_arena_alloc(&linear_arena, sizeof(Logger));
+	    (Logger *)linear_arena_alloc(&linear_arena, sizeof(Logger));
 	Logger *logger1 = (Logger *)malloc(sizeof(Logger));
 	if (!logger1) {
 		perror("Cannot allocate logger!");
@@ -42,5 +44,6 @@ int main(void) {
 
 	free(logger1);
 	linear_arena_free(&linear_arena);
+
 	return 0;
 }
