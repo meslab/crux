@@ -4,11 +4,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct LinearMemoryArena {
+	uint8_t *buffer;
+	size_t size;
+	size_t offset;
+} LinearMemoryArena;
+
 /// @brief Initialize a memory arena
 /// @param arena The memory arena to initialize
 /// @param size  The size of the memory arena in bytes
-void linear_arena_init(LinearMemoryArena *arena, size_t size) {
-	arena->buffer = (uint8_t *)malloc(size);
+LinearMemoryArena *linear_arena_init(size_t size) {
+	LinearMemoryArena *arena =
+	    (LinearMemoryArena *)calloc(1, sizeof(LinearMemoryArena));
+	arena->buffer = (uint8_t *)calloc(1, size);
 	if (arena->buffer == NULL) {
 		perror("Failed to allocate memory for arena");
 		fprintf(stderr, "errno: %d, strerror: %s\n", errno,
@@ -17,7 +25,7 @@ void linear_arena_init(LinearMemoryArena *arena, size_t size) {
 	}
 	arena->size = size;
 	arena->offset = 0;
-	linear_arena_status_update(arena);
+	return arena;
 }
 
 /// @brief Allocate memory from the arena
@@ -49,9 +57,5 @@ void linear_arena_free(LinearMemoryArena *arena) {
 	arena->buffer = NULL;
 	arena->size = 0;
 	arena->offset = 0;
-}
-
-void linear_arena_status_update(LinearMemoryArena *arena) {
-	snprintf(arena->status, sizeof(arena->status),
-		 "Arena size: %ld, offset: %ld", arena->size, arena->offset);
+	free(arena);
 }
