@@ -14,14 +14,14 @@
  */
 const char *log_level_str(LogLevel level) {
 	switch (level) {
-	case LOG_DEBUG:
-		return "DEBUG";
-	case LOG_INFO:
-		return "INFO";
-	case LOG_WARNING:
-		return "WARNING";
-	default:
-		return "ERROR";
+		case LOG_DEBUG:
+			return "DEBUG";
+		case LOG_INFO:
+			return "INFO";
+		case LOG_WARNING:
+			return "WARNING";
+		default:
+			return "ERROR";
 	}
 }
 
@@ -53,8 +53,8 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
 		return;
 
 	FILE *dest = (level == LOG_ERROR)
-			 ? (logger->err_log ? logger->err_log : stderr)
-			 : (logger->out_log ? logger->out_log : stdout);
+		? (logger->err_log ? logger->err_log : stderr)
+		: (logger->out_log ? logger->out_log : stdout);
 
 	time_t now = time(NULL);
 	struct tm *tm_info = localtime(&now);
@@ -62,7 +62,7 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
 	strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", tm_info);
 
 	fprintf(dest, "[%s] [%s] %s\n", time_buf, log_level_str(level),
-		message);
+			message);
 	fflush(dest);
 }
 
