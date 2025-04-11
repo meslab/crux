@@ -6,19 +6,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
-typedef enum { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR } LogLevel;
+typedef struct Logger Logger;
 
-typedef struct {
-	FILE *err_log;
-	FILE *out_log;
-	LogLevel level;
-} Logger;
-
-int logger_init(Logger *logger, FILE *err_log, FILE *out_log,
-		const char *log_level);
+Logger *logger_init(FILE *err_log, FILE *out_log, const char *log_level);
 void logger_close(Logger *Logger);
-
-void message_log(Logger *logger, const LogLevel level, const char *message);
 
 void error_log(Logger *logger, const char *message);
 void info_log(Logger *logger, const char *message);

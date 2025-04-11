@@ -1,10 +1,20 @@
 #include "logger.h"
-
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+typedef enum { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR } LogLevel;
+
+typedef struct Logger {
+	FILE *err_log;
+	FILE *out_log;
+	LogLevel level;
+} Logger;
+
+void message_log(Logger *logger, const LogLevel level, const char *message);
 
 /**
  * @brief Get the string representation of a log level
@@ -14,14 +24,14 @@
  */
 const char *log_level_str(LogLevel level) {
 	switch (level) {
-		case LOG_DEBUG:
-			return "DEBUG";
-		case LOG_INFO:
-			return "INFO";
-		case LOG_WARNING:
-			return "WARNING";
-		default:
-			return "ERROR";
+	case LOG_DEBUG:
+		return "DEBUG";
+	case LOG_INFO:
+		return "INFO";
+	case LOG_WARNING:
+		return "WARNING";
+	default:
+		return "ERROR";
 	}
 }
 
@@ -53,8 +63,8 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
 		return;
 
 	FILE *dest = (level == LOG_ERROR)
-		? (logger->err_log ? logger->err_log : stderr)
-		: (logger->out_log ? logger->out_log : stdout);
+			 ? (logger->err_log ? logger->err_log : stderr)
+			 : (logger->out_log ? logger->out_log : stdout);
 
 	time_t now = time(NULL);
 	struct tm *tm_info = localtime(&now);
@@ -62,7 +72,7 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
 	strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", tm_info);
 
 	fprintf(dest, "[%s] [%s] %s\n", time_buf, log_level_str(level),
-			message);
+		message);
 	fflush(dest);
 }
 
@@ -73,10 +83,10 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
  * @param opts The options
  * @return int 0 on success, -1 on failure
  */
-int logger_init(Logger *logger, FILE *err_log, FILE *out_log,
-		const char *log_level) {
+Logger *logger_init(FILE *err_log, FILE *out_log, const char *log_level) {
+	Logger *logger = (Logger *)malloc(sizeof(Logger));
 	if (!logger)
-		return -1;
+		return NULL;
 
 	logger->err_log = err_log;
 	logger->out_log = out_log;
@@ -85,7 +95,7 @@ int logger_init(Logger *logger, FILE *err_log, FILE *out_log,
 	// Set the log level
 	logger->level = parse_log_level(log_level ? log_level : "ERROR");
 
-	return 0; // Success
+	return logger;
 }
 
 /**
@@ -100,6 +110,7 @@ void logger_close(Logger *logger) {
 		if (logger->out_log)
 			fclose(logger->out_log);
 		logger->err_log = logger->out_log = NULL;
+		free(logger);
 	}
 }
 
