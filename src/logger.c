@@ -6,6 +6,8 @@
 #include <string.h>
 #include <time.h>
 
+#define MESSAGE_LOG_MAX_LENGTH 256
+
 typedef enum { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR } LogLevel;
 
 typedef struct Logger {
@@ -24,14 +26,14 @@ void message_log(Logger *logger, const LogLevel level, const char *message);
  */
 const char *log_level_str(LogLevel level) {
 	switch (level) {
-	case LOG_DEBUG:
-		return "DEBUG";
-	case LOG_INFO:
-		return "INFO";
-	case LOG_WARNING:
-		return "WARNING";
-	default:
-		return "ERROR";
+		case LOG_DEBUG:
+			return "DEBUG";
+		case LOG_INFO:
+			return "INFO";
+		case LOG_WARNING:
+			return "WARNING";
+		default:
+			return "ERROR";
 	}
 }
 
@@ -63,16 +65,17 @@ void message_log(Logger *logger, const LogLevel level, const char *message) {
 		return;
 
 	FILE *dest = (level == LOG_ERROR)
-			 ? (logger->err_log ? logger->err_log : stderr)
-			 : (logger->out_log ? logger->out_log : stdout);
+		? (logger->err_log ? logger->err_log : stderr)
+		: (logger->out_log ? logger->out_log : stdout);
 
 	time_t now = time(NULL);
-	struct tm *tm_info = localtime(&now);
+	struct tm tm_info = {0};
+	localtime_r(&now, &tm_info);
 	char time_buf[20] = {0}; // YYYY-MM-DD HH:MM:SS
-	strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", tm_info);
+	strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", &tm_info);
 
 	fprintf(dest, "[%s] [%s] %s\n", time_buf, log_level_str(level),
-		message);
+			message);
 	fflush(dest);
 }
 
