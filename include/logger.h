@@ -1,9 +1,6 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#define MESSAGE_LOG_MAX_LENGTH 256
-
-#include <stdint.h>
 #include <stdio.h>
 
 typedef struct Logger Logger;
