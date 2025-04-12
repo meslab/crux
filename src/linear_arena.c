@@ -59,3 +59,12 @@ void linear_arena_free(LinearMemoryArena *arena) {
 	arena->offset = 0;
 	free(arena);
 }
+
+int linear_arena_status(LinearMemoryArena *arena,
+			LinearMemoryArenaStatus *status) {
+	if (!status)
+		return 0;
+	status->size = arena->size;
+	status->offset = arena->offset;
+	return 1;
+}
