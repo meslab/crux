@@ -30,7 +30,7 @@ OBJ_FILES_DEBUG := $(patsubst src/%.c, $(LIB_DIR)/debug/%.o, $(SRC_FILES))
 $(shell mkdir -p $(LIB_DIR)/release $(LIB_DIR)/debug $(TEST_BIN_DIR)/release $(TEST_BIN_DIR)/debug)
 
 # Targets
-all: debug release
+all: debug release run_test_debug
 
 release: $(STATIC_LIB_RELEASE) $(SHARED_LIB_RELEASE) test_release
 

@@ -21,6 +21,7 @@ LinearMemoryArena *linear_arena_init(size_t size) {
 		perror("Failed to allocate memory for arena");
 		fprintf(stderr, "errno: %d, strerror: %s\n", errno,
 			strerror(errno));
+		free(arena);
 		exit(EXIT_FAILURE);
 	}
 	arena->size = size;
@@ -58,4 +59,13 @@ void linear_arena_free(LinearMemoryArena *arena) {
 	arena->size = 0;
 	arena->offset = 0;
 	free(arena);
+}
+
+int linear_arena_status(LinearMemoryArena *arena,
+			LinearMemoryArenaStatus *status) {
+	if (!status)
+		return 0;
+	status->size = arena->size;
+	status->offset = arena->offset;
+	return 1;
 }
