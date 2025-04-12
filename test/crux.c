@@ -27,6 +27,8 @@ int main(void) {
 	int *p_int = (int *)linear_arena_alloc(linear_arena, sizeof(int));
 	assert(p_int);
 	printf("p_int: %p\n", (void *)p_int);
+	linear_arena_status(linear_arena, &status);
+	printf("Arena size: %ld, offset: %ld\n", status.size, status.offset);
 
 	linear_arena_reset(linear_arena);
 	assert(linear_arena);
