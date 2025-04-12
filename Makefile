@@ -5,7 +5,6 @@ CFLAGS_DEBUG = -g -O0 -DDEBUG -Werror -fsanitize=address,undefined -fno-omit-fra
 LDFLAGS_RELEASE = -Wl,--gc-sections -flto -s
 LDFLAGS_DEBUG = -fsanitize=address,undefined
 
-TEST_BIN_DIR = test/bin
 LIB_DIR = lib
 INCLUDE_DIR = include
 LIB_NAME = crux
@@ -14,12 +13,13 @@ STATIC_LIB_DEBUG = $(LIB_DIR)/debug/lib$(LIB_NAME).a
 SHARED_LIB_RELEASE = $(LIB_DIR)/release/lib$(LIB_NAME).so
 SHARED_LIB_DEBUG = $(LIB_DIR)/debug/lib$(LIB_NAME).so
 
+TEST_DIR = test
 TEST_SRC = $(wildcard test/src/*.c)
 TEST_MAIN = $(wildcard test/*.c)
+TEST_INCLUDE_DIR = test/include 
+TEST_BIN_DIR = $(TEST_DIR)/bin
 TEST_STATIC_BIN_RELEASE = $(TEST_BIN_DIR)/release/test_crux
 TEST_STATIC_BIN_DEBUG = $(TEST_BIN_DIR)/debug/test_crux
-TEST_SHARED_BIN_RELEASE = $(TEST_BIN_DIR)/release/test_crux_shared
-TEST_SHARED_BIN_DEBUG = $(TEST_BIN_DIR)/debug/test_crux_shared
 
 # Gather all source files automatically
 SRC_FILES := $(wildcard src/*.c)
@@ -32,11 +32,11 @@ $(shell mkdir -p $(LIB_DIR)/release $(LIB_DIR)/debug $(TEST_BIN_DIR)/release $(T
 # Targets
 all: debug release
 
-release: $(STATIC_LIB_RELEASE) $(SHARED_LIB_RELEASE) test_release test_shared_release
+release: $(STATIC_LIB_RELEASE) $(SHARED_LIB_RELEASE) test_release
 
 debug: CFLAGS += $(CFLAGS_DEBUG)
 debug: LDFLAGS += $(LDFLAGS_DEBUG)
-debug: $(STATIC_LIB_DEBUG) $(SHARED_LIB_DEBUG) test_debug test_shared_debug
+debug: $(STATIC_LIB_DEBUG) $(SHARED_LIB_DEBUG) test_debug
 
 # Build static libraries
 $(STATIC_LIB_RELEASE): $(OBJ_FILES_RELEASE)
@@ -76,23 +76,16 @@ test_shared_debug: $(SHARED_LIB_DEBUG) $(TEST_SRC)
 run_test_release: test_release
 	$(TEST_STATIC_BIN_RELEASE)
 
-run_test_shared_release: test_shared_release
-	LD_LIBRARY_PATH=$(LIB_DIR)/release $(TEST_SHARED_BIN_RELEASE)
-
 run_test_debug: test_debug
 	$(TEST_STATIC_BIN_DEBUG)
 
-run_test_shared_debug: test_shared_debug
-	LD_LIBRARY_PATH=$(LIB_DIR)/debug $(TEST_SHARED_BIN_DEBUG)
-
 format:
-	find . -type f \( -name "*.c" -o -name "*.h" \) -exec clang-format -i {} +
+	@find . -type f \( -name "*.c" -o -name "*.h" \) -exec clang-format -i {} +
 # Clean build artifacts
 clean:
 	rm -rf $(LIB_DIR) $(TEST_BIN_DIR)
 
 .PHONY: all debug release \
-        test_release test_debug test_shared_release test_shared_debug \
-        clean \
-        run_test_release run_test_shared_release \
-        run_test_debug run_test_shared_debug format
+        test_release test_debug \
+        run_test_release run_test_debug \
+        clean format
