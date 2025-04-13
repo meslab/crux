@@ -20,6 +20,7 @@ TEST_INCLUDE_DIR = test/include
 TEST_BIN_DIR = $(TEST_DIR)/bin
 TEST_STATIC_BIN_RELEASE = $(TEST_BIN_DIR)/release/test_crux
 TEST_STATIC_BIN_DEBUG = $(TEST_BIN_DIR)/debug/test_crux
+TEST_SHARED_BIN_DEBUG = $(TEST_BIN_DIR)/debug/test_crux_shared
 
 # Gather all source files automatically
 SRC_FILES := $(wildcard src/*.c)
@@ -30,13 +31,13 @@ OBJ_FILES_DEBUG := $(patsubst src/%.c, $(LIB_DIR)/debug/%.o, $(SRC_FILES))
 $(shell mkdir -p $(LIB_DIR)/release $(LIB_DIR)/debug $(TEST_BIN_DIR)/release $(TEST_BIN_DIR)/debug)
 
 # Targets
-all: debug release run_test_debug
+all: debug release run_test_debug run_test_shared_debug
 
 release: $(STATIC_LIB_RELEASE) $(SHARED_LIB_RELEASE) test_release
 
 debug: CFLAGS += $(CFLAGS_DEBUG)
 debug: LDFLAGS += $(LDFLAGS_DEBUG)
-debug: $(STATIC_LIB_DEBUG) $(SHARED_LIB_DEBUG) test_debug
+debug: $(STATIC_LIB_DEBUG) $(SHARED_LIB_DEBUG) test_debug test_shared_debug
 
 # Build static libraries
 $(STATIC_LIB_RELEASE): $(OBJ_FILES_RELEASE)
@@ -79,6 +80,9 @@ run_test_release: test_release
 run_test_debug: test_debug
 	$(TEST_STATIC_BIN_DEBUG)
 
+run_test_shared_debug: test_shared_debug
+	LD_LIBRARY_PATH=$(LIB_DIR)/debug $(TEST_SHARED_BIN_DEBUG)
+
 format:
 	@find . -type f \( -name "*.c" -o -name "*.h" \) -exec clang-format -i {} +
 # Clean build artifacts
@@ -87,5 +91,6 @@ clean:
 
 .PHONY: all debug release \
         test_release test_debug \
-        run_test_release run_test_debug \
+        run_test_release run_test_debug run_test_shared_debug \
         clean format
+
