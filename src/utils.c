@@ -1,17 +1,13 @@
-#include "utils.h"
-
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-/// @brief  Convert a hex string to a uint32_t array
-/// @param hex_str  The hex string
-/// @param arr      The array to store the uint32_t values
-/// @param count    The number of uint32_t values
+#include "utils.h"
+
 int hex_to_uint32(const char *hex_str, uint32_t *arr, int *count,
-		  size_t max_count) {
+		  const size_t max_count) {
 	if (!hex_str || !arr || !count) {
 		return -1; // Error: NULL pointer
 	}
@@ -37,8 +33,6 @@ int hex_to_uint32(const char *hex_str, uint32_t *arr, int *count,
 	return 0; // Success
 }
 
-/// @brief  Convert a uint32_t array to a hex string
-/// @param str    The array of uint32_t values
 int to_upper_case(char *str) {
 	if (str == NULL) {
 		return -1; // Error: NULL pointer
