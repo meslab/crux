@@ -18,6 +18,7 @@ TEST_SRC = $(wildcard test/src/*.c)
 TEST_MAIN = $(wildcard test/*.c)
 TEST_INCLUDE_DIR = test/include 
 TEST_BIN_DIR = $(TEST_DIR)/bin
+TEST_OBJ_DIR = $(TEST_DIR)/obj
 TEST_STATIC_BIN_RELEASE = $(TEST_BIN_DIR)/release/test_crux
 TEST_STATIC_BIN_DEBUG = $(TEST_BIN_DIR)/debug/test_crux
 TEST_SHARED_BIN_DEBUG = $(TEST_BIN_DIR)/debug/test_crux_shared
@@ -26,9 +27,11 @@ TEST_SHARED_BIN_DEBUG = $(TEST_BIN_DIR)/debug/test_crux_shared
 SRC_FILES := $(wildcard src/*.c)
 OBJ_FILES_RELEASE := $(patsubst src/%.c, $(LIB_DIR)/release/%.o, $(SRC_FILES))
 OBJ_FILES_DEBUG := $(patsubst src/%.c, $(LIB_DIR)/debug/%.o, $(SRC_FILES))
+TEST_OBJ_FILES_DEBUG := $(patsubst test/src/%.c, $(TEST_OBJ_DIR)/debug/%.o, $(TEST_SRC))
+TEST_OBJ_FILES_RELEASE := $(patsubst test/src/%.c, $(TEST_OBJ_DIR)/release/%.o, $(TEST_SRC))
 
 # Create necessary directories at the start
-$(shell mkdir -p $(LIB_DIR)/release $(LIB_DIR)/debug $(TEST_BIN_DIR)/release $(TEST_BIN_DIR)/debug)
+$(shell mkdir -p $(LIB_DIR)/release $(LIB_DIR)/debug $(TEST_BIN_DIR)/release $(TEST_BIN_DIR)/debug $(TEST_OBJ_DIR)/debug $(TEST_OBJ_DIR)/release)
 
 # Targets
 all: debug release run_test_debug run_test_shared_debug
@@ -60,18 +63,24 @@ $(SHARED_LIB_RELEASE): $(OBJ_FILES_RELEASE)
 $(SHARED_LIB_DEBUG): $(OBJ_FILES_DEBUG)
 	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -shared $(LDFLAGS_DEBUG) -o $@ $^
 
-# Test binaries
-test_release: $(STATIC_LIB_RELEASE) $(TEST_SRC)
-	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB_RELEASE) $(LDFLAGS_RELEASE) -o $(TEST_STATIC_BIN_RELEASE)
+$(TEST_OBJ_DIR)/debug/%.o: test/src/%.c
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) -c $< -o $@
 
-test_debug: $(STATIC_LIB_DEBUG) $(TEST_SRC)
-	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -I$(INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB_DEBUG) $(LDFLAGS_DEBUG) -o $(TEST_STATIC_BIN_DEBUG)
+$(TEST_OBJ_DIR)/release/%.o: test/src/%.c
+	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) -c $< -o $@
+
+# Test binaries
+test_release: $(STATIC_LIB_RELEASE) $(TEST_SRC) $(TEST_OBJ_FILES_RELEASE)
+	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB_RELEASE) $(LDFLAGS_RELEASE) -o $(TEST_STATIC_BIN_RELEASE)
+
+test_debug: $(STATIC_LIB_DEBUG) $(TEST_SRC) $(TEST_OBJ_FILES_DEBUG)
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB_DEBUG) $(LDFLAGS_DEBUG) -o $(TEST_STATIC_BIN_DEBUG)
 
 test_shared_release: $(SHARED_LIB_RELEASE) $(TEST_SRC)
-	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) -L$(LIB_DIR)/release -l$(LIB_NAME) $(LDFLAGS_RELEASE) -o $(TEST_SHARED_BIN_RELEASE)
+	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) -L$(LIB_DIR)/release -l$(LIB_NAME) $(LDFLAGS_RELEASE) -o $(TEST_SHARED_BIN_RELEASE)
 
 test_shared_debug: $(SHARED_LIB_DEBUG) $(TEST_SRC)
-	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -I$(INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) -L$(LIB_DIR)/debug -l$(LIB_NAME) $(LDFLAGS_DEBUG) -o $(TEST_SHARED_BIN_DEBUG)
+	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) -L$(LIB_DIR)/debug -l$(LIB_NAME) $(LDFLAGS_DEBUG) -o $(TEST_SHARED_BIN_DEBUG)
 
 # Run tests
 run_test_release: test_release
@@ -87,7 +96,7 @@ format:
 	@find . -type f \( -name "*.c" -o -name "*.h" \) -exec clang-format -i {} +
 # Clean build artifacts
 clean:
-	rm -rf $(LIB_DIR) $(TEST_BIN_DIR)
+	rm -rf $(LIB_DIR) $(TEST_BIN_DIR) $(TEST_OBJ_DIR)
 
 .PHONY: all debug release \
         test_release test_debug \
