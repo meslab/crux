@@ -34,13 +34,13 @@ TEST_OBJ_FILES_RELEASE := $(patsubst test/src/%.c, $(TEST_OBJ_DIR)/release/%.o, 
 $(shell mkdir -p $(LIB_DIR)/release $(LIB_DIR)/debug $(TEST_BIN_DIR)/release $(TEST_BIN_DIR)/debug $(TEST_OBJ_DIR)/debug $(TEST_OBJ_DIR)/release)
 
 # Targets
-all: debug release run_test_debug run_test_shared_debug
+all: debug release run_test_release run_test_debug run_test_shared_debug
 
-release: $(STATIC_LIB_RELEASE) $(SHARED_LIB_RELEASE) test_release
+release: $(STATIC_LIB_RELEASE) $(SHARED_LIB_RELEASE) $(TEST_STATIC_BIN_RELEASE)
 
 debug: CFLAGS += $(CFLAGS_DEBUG)
 debug: LDFLAGS += $(LDFLAGS_DEBUG)
-debug: $(STATIC_LIB_DEBUG) $(SHARED_LIB_DEBUG) test_debug test_shared_debug
+debug: $(STATIC_LIB_DEBUG) $(SHARED_LIB_DEBUG) $(TEST_STATIC_BIN_DEBUG) $(TEST_SHARED_BIN_DEBUG)
 
 # Build static libraries
 $(STATIC_LIB_RELEASE): $(OBJ_FILES_RELEASE)
@@ -70,26 +70,26 @@ $(TEST_OBJ_DIR)/release/%.o: test/src/%.c
 	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) -c $< -o $@
 
 # Test binaries
-test_release: $(STATIC_LIB_RELEASE) $(TEST_SRC) $(TEST_OBJ_FILES_RELEASE)
+$(TEST_STATIC_BIN_RELEASE): $(STATIC_LIB_RELEASE) $(TEST_SRC) $(TEST_OBJ_FILES_RELEASE)
 	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB_RELEASE) $(LDFLAGS_RELEASE) -o $(TEST_STATIC_BIN_RELEASE)
 
-test_debug: $(STATIC_LIB_DEBUG) $(TEST_SRC) $(TEST_OBJ_FILES_DEBUG)
+$(TEST_STATIC_BIN_DEBUG): $(STATIC_LIB_DEBUG) $(TEST_SRC) $(TEST_OBJ_FILES_DEBUG)
 	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) $(STATIC_LIB_DEBUG) $(LDFLAGS_DEBUG) -o $(TEST_STATIC_BIN_DEBUG)
 
-test_shared_release: $(SHARED_LIB_RELEASE) $(TEST_SRC)
+$(TEST_SHARED_BIN_RELEASE): $(SHARED_LIB_RELEASE) $(TEST_SRC)
 	$(CC) $(CFLAGS) $(CFLAGS_RELEASE) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) -L$(LIB_DIR)/release -l$(LIB_NAME) $(LDFLAGS_RELEASE) -o $(TEST_SHARED_BIN_RELEASE)
 
-test_shared_debug: $(SHARED_LIB_DEBUG) $(TEST_SRC)
+$(TEST_SHARED_BIN_DEBUG): $(SHARED_LIB_DEBUG) $(TEST_SRC)
 	$(CC) $(CFLAGS) $(CFLAGS_DEBUG) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) $(TEST_SRC) $(TEST_MAIN) -L$(LIB_DIR)/debug -l$(LIB_NAME) $(LDFLAGS_DEBUG) -o $(TEST_SHARED_BIN_DEBUG)
 
 # Run tests
-run_test_release: test_release
+run_test_release: 
 	$(TEST_STATIC_BIN_RELEASE)
 
-run_test_debug: test_debug
+run_test_debug: 
 	$(TEST_STATIC_BIN_DEBUG)
 
-run_test_shared_debug: test_shared_debug
+run_test_shared_debug: 
 	LD_LIBRARY_PATH=$(LIB_DIR)/debug $(TEST_SHARED_BIN_DEBUG)
 
 format:
@@ -99,7 +99,6 @@ clean:
 	rm -rf $(LIB_DIR) $(TEST_BIN_DIR) $(TEST_OBJ_DIR)
 
 .PHONY: all debug release \
-        test_release test_debug \
         run_test_release run_test_debug run_test_shared_debug \
         clean format
 
