@@ -67,10 +67,10 @@ $(SHARED_LIB_DEBUG): $(OBJ_FILES_DEBUG)
 	$(CC) $(CFLAGS) -shared $(LDFLAGS) -o $@ $^
 
 $(TEST_OBJ_DIR)/debug/%.o: test/src/%.c
-	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) -c $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) -c $< -o $@
 
 $(TEST_OBJ_DIR)/release/%.o: test/src/%.c
-	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) -c $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCLUDE_DIR) -I$(TEST_INCLUDE_DIR) -c $< -o $@
 
 # Test binaries
 $(TEST_STATIC_BIN_RELEASE): $(STATIC_LIB_RELEASE) $(TEST_SRC) $(TEST_OBJ_FILES_RELEASE)
