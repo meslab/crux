@@ -1,6 +1,6 @@
 CC = clang
 CFLAGS = -Wall -Wextra -Wpedantic -fPIC
-CFLAGS_RELEASE = -O2 -ffunction-sections -flto -DNDEBUG
+CFLAGS_RELEASE = -O2 -ffunction-sections -fdata-sections -flto -DNDEBUG
 CFLAGS_DEBUG = -g -O0 -DDEBUG -Werror -fsanitize=address,undefined -fno-omit-frame-pointer
 LDFLAGS_RELEASE = -Wl,--gc-sections -flto -s
 LDFLAGS_DEBUG = -fsanitize=address,undefined
@@ -36,6 +36,8 @@ $(shell mkdir -p $(LIB_DIR)/release $(LIB_DIR)/debug $(TEST_BIN_DIR)/release $(T
 # Targets
 all: debug release run_test_release run_test_debug run_test_shared_debug
 
+release: CFLAGS += $(CFLAGS_RELEASE)
+release: LDFLAGS += $(LDFLAGS_RELEASE)
 release: $(STATIC_LIB_RELEASE) $(SHARED_LIB_RELEASE) $(TEST_STATIC_BIN_RELEASE)
 
 debug: CFLAGS += $(CFLAGS_DEBUG)
